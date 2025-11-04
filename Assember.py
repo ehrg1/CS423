@@ -191,10 +191,13 @@ def parse():
 
 
 def header():
-    global lookahead
+    global lookahead, locctr
     lookahead = lexan()
+    tok = tokenval
     match('ID')
     match('START')
+    locctr = tokenval
+    symtable[tok].att = locctr = tokenval
     match('NUM')
 
 
@@ -218,19 +221,27 @@ def rest1():
 
 
 def stmt():
+    global locctr, startLine
+    
+    startLine = False
     match('F3')
+    locctr += 3
     match('ID')
     index()
 
 def data():
+    global locctr
     if lookahead == 'WORD':
         match('WORD')
+        locctr += 3
         match('NUM')
     elif lookahead == 'RESW':
         match('RESW')
+        locctr += 3 * tokenval
         match('NUM')
     elif lookahead == 'RESB':
         match('RESB')
+        locctr += tokenval
         match('NUM')
     elif lookahead == 'BYTE':
         match('BYTE')
@@ -239,9 +250,13 @@ def data():
         error('Syntax error')
 
 def rest2():
+    global locctr
+    size = int(len(symtable[tokenval].att)/2)
     if lookahead == 'STRING':
+        locctr += size
         match('STRING')
     elif lookahead == 'HEX':
+        locctr += size
         match('HEX')
     else:
         error('Syntax error')

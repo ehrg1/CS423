@@ -1,6 +1,7 @@
-prog start 0
+prog start 100
     lda xx
     sta yy
-xx  word 5
-yy  resw 1
+yy  word 5
+xx  byte X'abcd'
+zz resb 1
     end prog
