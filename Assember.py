@@ -59,6 +59,11 @@ Pbit3set = 0x2000
 Ebit3set = 0x1000
 
 
+
+
+inst = 0
+
+
 def is_hex(s):
     if s[0:2].upper() == '0X':
         try:
@@ -174,11 +179,12 @@ def match(token):
 
 
 def index():
-    global bufferindex, symtable, tokenval
+    global bufferindex, symtable, tokenval, inst
     if lookahead == ',':
         match(',')
         if symtable[tokenval].att != 1:
             error('index register should be X')
+        inst += Xbit3set
         match('REG')
         return True
     return False
@@ -196,7 +202,6 @@ def header():
     tok = tokenval
     match('ID')
     match('START')
-    locctr = tokenval
     symtable[tok].att = locctr = tokenval
     match('NUM')
 
@@ -221,19 +226,27 @@ def rest1():
 
 
 def stmt():
-    global locctr, startLine
+    global locctr, startLine, inst
     
     startLine = False
+    if pass1or2 == 2:
+        inst = symtable[tokenval].att << 16
     match('F3')
     locctr += 3
+    inst += symtable[tokenval].att
     match('ID')
     index()
+    if pass1or2 == 2:
+        print('{:06X}'.format(inst))
+        
 
 def data():
     global locctr
     if lookahead == 'WORD':
         match('WORD')
         locctr += 3
+        if pass1or2 == 2:
+            print('{:06X}'.format(tokenval))
         match('NUM')
     elif lookahead == 'RESW':
         match('RESW')
