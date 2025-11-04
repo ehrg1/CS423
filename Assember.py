@@ -27,6 +27,7 @@ def init():
         insert(instfile.inst[i], instfile.token[i], instfile.opcode[i])
     for i in range(0,instfile.directives.__len__()):
         insert(instfile.directives[i], instfile.dirtoken[i], instfile.dircode[i])
+        
     # in case of extension of the architecture
     for i in range(0,instfile.inst_ex.__len__()):
         insert(instfile.inst_ex[i], instfile.inst_token_ex[i], instfile.inst_ex_opcode[i])
@@ -177,14 +178,77 @@ def index():
     if lookahead == ',':
         match(',')
         if symtable[tokenval].att != 1:
-            error('index regsiter should be X')
+            error('index register should be X')
         match('REG')
         return True
     return False
 
 def parse():
     # write the parser here
-    pass
+    header()
+    body()
+    tail()
+
+
+def header():
+    global lookahead
+    lookahead = lexan()
+    match('ID')
+    match('START')
+    match('NUM')
+
+
+def body():
+    if lookahead == 'ID':
+        match('ID')
+        rest1()
+        body()
+    elif lookahead == 'F3':
+        stmt()
+        body()
+
+
+def rest1():
+    if lookahead == 'F3':
+        stmt()
+    elif lookahead in ['WORD', 'RESW', 'RESB', 'BYTE']:
+        data()
+    else:
+        error('Syntax error')
+
+
+def stmt():
+    match('F3')
+    match('ID')
+    index()
+
+def data():
+    if lookahead == 'WORD':
+        match('WORD')
+        match('NUM')
+    elif lookahead == 'RESW':
+        match('RESW')
+        match('NUM')
+    elif lookahead == 'RESB':
+        match('RESB')
+        match('NUM')
+    elif lookahead == 'BYTE':
+        match('BYTE')
+        rest2()
+    else:
+        error('Syntax error')
+
+def rest2():
+    if lookahead == 'STRING':
+        match('STRING')
+    elif lookahead == 'HEX':
+        match('HEX')
+    else:
+        error('Syntax error')
+
+def tail():
+    match('END')
+    match('ID')
 
 
 def main():
