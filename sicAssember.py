@@ -235,13 +235,15 @@ def stmt():
     global locctr, startLine, inst
     
     startLine = False
+    tok = tokenval
     if pass1or2 == 2:
         inst = symtable[tokenval].att << 16
-    match('F3')
     locctr += 3
-    inst += symtable[tokenval].att
-    match('ID')
-    index()
+    match('F3')
+    if symtable[tok].string != 'RSUB':
+        inst += symtable[tokenval].att
+        match('ID')
+        index()
     if pass1or2 == 2:
         if objectCode:
             print('T{:06X}  {:02X}  {:06X}'.format(locctr - 3, 3, inst))
