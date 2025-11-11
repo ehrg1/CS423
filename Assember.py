@@ -251,10 +251,16 @@ def data():
     elif lookahead == 'RESW':
         match('RESW')
         locctr += 3 * tokenval
+        if pass1or2 == 2:
+            for i in range(tokenval):
+                print('000000')
         match('NUM')
     elif lookahead == 'RESB':
         match('RESB')
         locctr += tokenval
+        if pass1or2 == 2:
+            for i in range(tokenval):
+                print('00')
         match('NUM')
     elif lookahead == 'BYTE':
         match('BYTE')
@@ -267,9 +273,13 @@ def rest2():
     size = int(len(symtable[tokenval].att)/2)
     if lookahead == 'STRING':
         locctr += size
+        if pass1or2 == 2:
+            print(symtable[tokenval].att)
         match('STRING')
     elif lookahead == 'HEX':
         locctr += size
+        if pass1or2 == 2:
+            print(symtable[tokenval].att)
         match('HEX')
     else:
         error('Syntax error')
