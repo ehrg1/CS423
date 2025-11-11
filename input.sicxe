@@ -1,0 +1,9 @@
+prog start 0
+    sta xx, x
+main    lda yy
+    add zz
+tt  word 20
+xx  byte c'abcd'
+yy  byte x'0123'
+zz word 5
+    end main
